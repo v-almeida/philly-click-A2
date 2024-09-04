@@ -22,7 +22,6 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             AV2Theme {
-                // Configuração da tela do jogo
                 GameScreen()
             }
         }
@@ -35,14 +34,22 @@ fun GameScreen() {
     var clicks by remember { mutableStateOf(0) }
     val requiredClicks by remember { mutableStateOf(Random.nextInt(1, 51)) } // Gera um número aleatório entre 1 e 50
 
-    LaunchedEffect(clicks, requiredClicks) {
-        stage = when {
-            requiredClicks == 0 -> Stage.INITIAL // Previne divisão por zero
-            clicks == 0 -> Stage.INITIAL
-            clicks in 1 until requiredClicks / 2 -> Stage.MID
-            clicks in (requiredClicks / 2) until requiredClicks -> Stage.FINAL
-            clicks >= requiredClicks -> Stage.CONQUERED
-            else -> Stage.INITIAL
+    // Atualiza o estágio com base nos cliques
+    LaunchedEffect(clicks) {
+        try {
+            if (requiredClicks <= 0) {
+                throw IllegalStateException("Número de cliques necessários deve ser maior que zero.")
+            }
+
+            val percentage = (clicks.toFloat() / requiredClicks) * 100
+            stage = when {
+                clicks >= requiredClicks -> Stage.CONQUERED
+                percentage <= 33 -> Stage.INITIAL
+                percentage <= 66 -> Stage.MID
+                else -> Stage.FINAL
+            }
+        } catch (e: Exception) {
+            e.printStackTrace() // Captura e exibe exceções no Logcat
         }
     }
 
@@ -84,7 +91,7 @@ fun JourneyImage(stage: Stage) {
     val imageRes: Painter = when (stage) {
         Stage.INITIAL -> painterResource(id = R.drawable.sixers)
         Stage.MID -> painterResource(id = R.drawable.phillies)
-        Stage.FINAL -> painterResource(id = R.drawable.eagles)
+        Stage.FINAL -> painterResource(id = R.drawable.coringao)
         Stage.CONQUERED -> painterResource(id = R.drawable.trophy)
         Stage.GAVE_UP -> painterResource(id = R.drawable.quiter)
     }
@@ -97,7 +104,6 @@ fun JourneyImage(stage: Stage) {
             .clickable { /* Ação ao clicar na imagem, se necessário */ }
     )
 }
-
 
 // Enum para representar os diferentes estágios da jornada
 enum class Stage {
