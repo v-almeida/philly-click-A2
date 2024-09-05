@@ -132,7 +132,7 @@ fun JourneyImage(stage: Stage) {
         Stage.MID -> painterResource(id = R.drawable.phillies) // Imagem de progresso médio
         Stage.FINAL -> painterResource(id = R.drawable.eagles) // Imagem final antes de concluir
         Stage.CONQUERED -> painterResource(id = R.drawable.trophy) // Imagem de vitória
-        Stage.GAVE_UP -> painterResource(id = R.drawable.quiter) // Imagem de desistência
+        Stage.GAVE_UP -> painterResource(id = R.drawable.kdquiter) // Imagem de desistência
     }
 
     // Exibe a imagem
